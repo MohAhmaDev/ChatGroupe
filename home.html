@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Notre super chat !</title>
+
+  <!--<link rel="stylesheet" href="css/space_commaint.css">-->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+
+</head>
+<body>
+
+  <div class="action">
+    <div class="profil" onclick="menuToggle()">
+        <img src="images/logo1.png" id="myimg">
+    </div>
+    <div class="menu">
+        <h3 id="profil-user"> Anonymous </h3>
+        <ul>
+        <li> 
+            <i class="fas fa-cog"></i> <a href="profil.php"> My profil </a> </li>
+            <li> <i class="fas fa-cog"></i> <a href="home.html"> Anonymmes chat </a> </li>
+            <li> <i class="fas fa-cog"></i> <a href="users.php"> chat with somme one </a> </li>
+
+            <li> <i class="fas fa-cog"></i> <a href="server/php/logout.php" id="deconnection"> Logout </a> </li>			
+          </ul>
+    </div>
+  </div>  
+  <section class="chat" style="padding: 50px; " >
+    <div class="messages">
+
+    </div>
+    <br>
+    <div class="container-fluid modif"> 
+      <form action="handler.php?task=write" method="POST" class="needs-validation" novalidate>
+
+            <!-- <label for="firstName"> Email/Nom </label> -->
+            <input class="form-contro myInput" type="text" name="author" id="author" placeholder="Nickname" required>
+          
+
+          <!-- <label for="pwd">Message:</label> -->
+          <input class="form-contro myInput2" id="content" name="content" placeholder="Type in your message " required>
+
+          <!--<div class="invalid-feedback">
+            aucun message n'a éte sésie 
+          </div>   -->
+          <button type="submit" class="bt btn-primar myBtn" id="mail-check">Submit</button>
+
+      </form>
+    </div>
+    <br>
+    <div id="result"></div>
+  </section>
+
+  <script>
+   
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+          // Get the forms we want to add validation styles to
+          var forms = document.getElementsByClassName('needs-validation');
+          // Loop over them and prevent submission
+          var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+              if (form.checkValidity() === false) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+              form.classList.add('was-validated');
+            }, false);
+          });
+        }, false);
+      })();
+
+  /**
+     * Codons un chat en HTML/CSS/Javascript avec nos amis PHP et MySQL
+     */
+
+    /**
+     * Il nous faut une fonction pour récupérer le JSON des
+     * messages et les afficher correctement
+     */
+     function getMessages(){
+      // 1. Elle doit créer une requête AJAX pour se connecter au serveur, et notamment au fichier handler.php
+      const requeteAjax = new XMLHttpRequest();
+      requeteAjax.open("GET", "server/handler.php");
+
+      // 2. Quand elle reçoit les données, il faut qu'elle les traite (en exploitant le JSON) et il faut qu'elle affiche ces données au format HTML
+      requeteAjax.onload = function(){
+        const resultat = JSON.parse(requeteAjax.responseText);
+        const html = resultat.reverse().map(function(message){
+          
+            
+            
+          return `<div class="message">
+            <span class="date">${message.created_at.substring(0, 16)}</span>
+            <span class="author">${message.author}</span> : 
+            <span class="content">${message.content}</span>
+          </div>
+          `
+        }).join('');
+        const messages = document.querySelector('.messages');
+
+        messages.innerHTML = html;
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      // 3. On envoie la requête
+      requeteAjax.send();
+    }
+
+    /**
+     * Il nous faut une fonction pour envoyer le nouveau
+     * message au serveur et rafraichir les messages
+     */
+
+    function postMessage(event){
+      // 1. Elle doit stoper le submit du formulaire
+      event.preventDefault();
+
+      // 2. Elle doit récupérer les données du formulaire
+      let author = document.querySelector('#author');
+      let content = document.querySelector('#content');
+
+
+
+      // 3. Elle doit conditionner les données
+      const data = new FormData();
+      data.append('author', author.value);
+      data.append('content', content.value);
+
+      // 4. Elle doit configurer une requête ajax en POST et envoyer les données
+      const requeteAjax = new XMLHttpRequest();
+      requeteAjax.open('POST', 'server/handler.php?task=write');
+      
+      requeteAjax.onload = function(){
+        content.value = '';
+        content.focus();
+        getMessages();
+      }
+
+      requeteAjax.send(data);
+
+      requeteAjax.onload = function () {
+        const result = requeteAjax.responseText;
+        const M = document.querySelector('#result');
+
+        M.innerHTML += result;
+        author.value = "";
+        content.value = "";
+      }
+    }
+
+    document.querySelector('form').addEventListener('submit', postMessage);
+
+    /**
+     * Il nous faut une intervale qui demande le rafraichissement
+     * des messages toutes les 3 secondes et qui donne 
+     * l'illusion du temps réel.
+     */
+    const interval = window.setInterval(getMessages, 3000);
+
+    getMessages();
+  
+    let author = document.querySelector('#author');
+    let content = document.querySelector('#content');
+
+    //controle javaScript
+
+    function menuToggle(argument) 
+    {
+        const toggleMenu = document.querySelector('.menu');
+        toggleMenu.classList.toggle('active');
+    }
+
+  </script>
+
+</body>
+</html>  

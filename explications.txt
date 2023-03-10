@@ -1,0 +1,17 @@
+listes des mots de pass et mail des utilisateurs:
+
+user1=>['mail' :: 'mail1@gmail.com', 'mdp':'SSAD**22?']
+user2=>['mail' :: 'mail2@gmail.com', 'mdp':'SSAD**22?']->Racim;
+user3=>['mail' :: 'mail3@gmail.com', 'mdp':'SSAD**22?']->Maroua;
+user4=>['mail' :: 'mail4@gmail.com', 'mdp':'SSAD**22?']->Manel;
+user5=>['mail' :: 'mail5@gmail.com', 'mdp':'SSAD**22?']->siham;
+user6=>['mail' :: 'mail6@gmail.com', 'mdp':'SSAD**22?']->Sabah;
+
+
+
+base de donnée "projet_ssad" => posséde 5 table
+tab1 : 'user_chat' => posséde 4 champs permet de se connecter au site (mots de pass sont crypter en bcrypt).
+tab2 : 'users' => posséde 8 champs pérmet d'envoyer des messages à une personne parmis les utilisateurs du chat (mots de pass sont crypter
+en bcrypt).
+tab2 : 'messages' => posséde 4 champs enregistre le message (l'id du récepteur et du trancsmetteurs sont chiffré).
+tab3 : 'chat_messages' => posséde 4 champs permet de déscuter dans un chat en groupe où l'identité du posteur du message n'est pas enregistrer

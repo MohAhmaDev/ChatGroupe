@@ -1,0 +1,1 @@
+<?= realpath('base.php'); ?>

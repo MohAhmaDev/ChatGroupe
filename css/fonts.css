@@ -1,0 +1,13 @@
+@font-face {
+    font-family: "mont";
+    src: url('../fonts/Montserrat/Montserrat-Regular.ttf');
+}
+@font-face{
+    font-family: "LATO";
+    src: url('../fonts/Lato/Lato-Regular.ttf');
+}
+
+@font-face {
+    font-family: "POP";
+    src: url('../fonts/Poppins/Poppins-Regular.ttf');
+}

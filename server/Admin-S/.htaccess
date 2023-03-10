@@ -1,0 +1,9 @@
+<FilesMatch "admin.php">
+	AuthName "this file is privete"
+	AuthType Basic
+	AuthUserFile "C:\xampp\htdocs\chat\PROJET01\app\server\Admin-S\.htpasswd"
+	Require valid-user
+</FilesMatch>
+
+
+
